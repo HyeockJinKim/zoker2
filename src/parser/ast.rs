@@ -42,36 +42,36 @@ pub enum ContractStatementType {
 #[derive(Debug, PartialEq)]
 pub enum StatementType {
     IfStatement {
-        condition: Box<Expression>,
+        condition: Expression,
         if_statements: Vec<Statement>,
         else_statements: Vec<Statement>,
     },
     ForEachStatement {
         iterator: String,
-        iterable: Box<Expression>,
+        iterable: Expression,
         statement: Vec<Statement>,
     },
     ReturnStatement {
-        ret: Box<Expression>,
+        ret: Expression,
     },
     InitializerStatement {
         variable_type: Type,
         variable: String,
-        default: Option<Box<Expression>>,
+        default: Option<Expression>,
     },
     AssignStatement {
         left: String,
         operator: AssignOperator,
-        right: Box<Expression>,
+        right: Expression,
     },
     Expression {
-        expression: Box<Expression>,
+        expression: Expression,
     },
 }
 
 #[derive(Debug, PartialEq)]
 pub enum ExpressionType {
-    BinaryExpression(Box<BinaryExpression>),
+    BinaryExpression(BinaryExpression),
     FunctionCallExpression {
         function_name: String,
         arguments: Vec<Expression>,

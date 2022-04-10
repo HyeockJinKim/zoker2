@@ -5,9 +5,11 @@ use crate::parser::lexer::make_tokenizer;
 
 pub mod error;
 mod parser;
-// mod rewriter;
 // mod zkboo;
 mod location;
+mod traverser;
+mod generator;
+mod caller;
 
 lalrpop_mod!(
     #[allow(clippy::all)]
