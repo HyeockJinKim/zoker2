@@ -1,5 +1,3 @@
-use num_bigint::BigUint;
-
 /// Zoker source code can be tokenized in a sequence of these tokens.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Tok {
@@ -55,7 +53,7 @@ pub enum Tok {
     Semi,
     Comma,
     // variable
-    Num { number: BigUint },
+    Num { number: u64 },
     Identifier { name: String },
     Literal { literal: String },
     EOF,

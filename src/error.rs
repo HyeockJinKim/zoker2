@@ -4,6 +4,7 @@ use crate::parser::Tok;
 use std::error::Error;
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::num::ParseIntError;
 
 #[derive(Debug, PartialEq)]
 pub struct ZokError {
@@ -70,8 +71,8 @@ impl From<LalrpopError<Location, Tok, LexicalError>> for ZokError {
     }
 }
 
-impl From<num_bigint::ParseBigIntError> for LexicalError {
-    fn from(_err: num_bigint::ParseBigIntError) -> Self {
+impl From<ParseIntError> for LexicalError {
+    fn from(_err: ParseIntError) -> Self {
         LexicalError {
             error: LexicalErrorType::UnrecognizedToken('c'),
             location: Default::default(),

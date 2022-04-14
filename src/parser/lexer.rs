@@ -1,4 +1,3 @@
-use num_bigint::BigUint;
 use std::str::FromStr;
 use unic_ucd_ident::{is_xid_continue, is_xid_start};
 use crate::error::{LexicalError, LexicalErrorType};
@@ -254,7 +253,7 @@ impl<T> Lexer<T>
             }
         }
         Ok(Tok::Num {
-            number: BigUint::from_str(&text)?,
+            number: u64::from_str(&text)?,
         })
     }
 

@@ -4,7 +4,7 @@ pub use operation::Op;
 
 mod contract;
 mod function;
-mod operation;
+pub mod operation;
 
 pub trait Caller {
     fn call(&self);

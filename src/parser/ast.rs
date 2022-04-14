@@ -1,4 +1,3 @@
-use num_bigint::BigUint;
 use crate::location::Location;
 
 // https://rust-lang.github.io/rust-clippy/master/index.html#large_enum_variant
@@ -49,10 +48,10 @@ pub enum StatementType {
     ForEachStatement {
         iterator: String,
         iterable: Expression,
-        statement: Vec<Statement>,
+        statements: Vec<Statement>,
     },
     ReturnStatement {
-        ret: Expression,
+        return_value: Expression,
     },
     InitializerStatement {
         variable_type: Type,
@@ -77,7 +76,7 @@ pub enum ExpressionType {
         arguments: Vec<Expression>,
     },
     Number {
-        value: BigUint,
+        value: u64,
     },
     Identifier {
         value: String,

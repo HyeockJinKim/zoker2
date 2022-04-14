@@ -1,9 +1,8 @@
-use zoker2::parse_zok;
+use zoker2::{ASTTraverser, parse_zok};
 
 fn main() {
     let res = parse_zok("contract A { function check(uint age) returns uint { return age > 19; } }").unwrap();
-    let a = Some(0);
-    a.unwrap_or(20);
+    let contracts = ASTTraverser::traverse(res);
 }
 
 // contract A { function f() returns uint { return 0; } }

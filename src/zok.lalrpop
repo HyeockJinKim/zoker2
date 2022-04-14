@@ -3,8 +3,6 @@ use crate::error::LexicalError;
 use crate::parser::token;
 use crate::location;
 
-use num_bigint::BigUint;
-
 grammar;
 
 // All `pub`s are used for dev env.
@@ -130,7 +128,7 @@ ForEachStatement: ast::Statement = {
         node: ast::StatementType::ForEachStatement {
             iterator: iter,
             iterable: vector,
-            statement: stmts.unwrap_or(vec![]),
+            statements: stmts.unwrap_or(vec![]),
         }
     },
 };
@@ -139,7 +137,7 @@ ReturnStatement: ast::Statement = {
     <location:@L> "return" <expr:Expression> => ast::Statement {
         location,
         node: ast::StatementType::ReturnStatement {
-            ret: expr,
+            return_value: expr,
         }
     },
 };
@@ -513,6 +511,6 @@ extern {
         "," => token::Tok::Comma,
         // Identifier
         name => token::Tok::Identifier { name: <String> },
-        number => token::Tok::Num { number: <BigUint> },
+        number => token::Tok::Num { number: <u64> },
     }
 }
