@@ -13,6 +13,23 @@ pub fn push(var: Var) -> Op {
     })
 }
 
+pub fn load(var: String) -> Op {
+    Box::new(move |mut ctx: Context| {
+        let v = ctx.variables.get(var.as_str()).unwrap();
+        ctx.stack.push(v.capture());
+        ctx
+    })
+}
+
+pub fn store() -> Op {
+    Box::new(move |mut ctx: Context| {
+        let v = ctx.stack.pop().unwrap();
+        let name = v.name();
+        ctx.variables.insert(name, v);
+        ctx
+    })
+}
+
 pub fn bin_op(op: BinOp) -> Op {
     Box::new(move |mut ctx: Context| {
         let c2 = ctx.stack.pop().unwrap();
