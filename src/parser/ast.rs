@@ -18,7 +18,6 @@ pub type ContractStatement = Located<ContractStatementType>;
 pub type Statement = Located<StatementType>;
 pub type Expression = Located<ExpressionType>;
 pub type Parameter = Located<ParameterType>;
-pub type BinaryExpression = Located<BinaryExpressionType>;
 
 #[derive(Debug, PartialEq)]
 pub enum GlobalStatementType {
@@ -70,7 +69,11 @@ pub enum StatementType {
 
 #[derive(Debug, PartialEq)]
 pub enum ExpressionType {
-    BinaryExpression(BinaryExpression),
+    BinaryExpression {
+        left: Box<Expression>,
+        operator: BinaryOperator,
+        right: Box<Expression>,
+    },
     FunctionCallExpression {
         function_name: String,
         arguments: Vec<Expression>,
@@ -95,30 +98,6 @@ pub enum ParameterType {
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub enum BinaryExpressionType {
-    Arithmetic {
-        left: Box<Expression>,
-        operator: ArithmeticOperator,
-        right: Box<Expression>,
-    },
-    Bit {
-        left: Box<Expression>,
-        operator: BitOperator,
-        right: Box<Expression>,
-    },
-    Comparison {
-        left: Box<Expression>,
-        operator: ComparisonOperator,
-        right: Box<Expression>,
-    },
-    Logical {
-        left: Box<Expression>,
-        operator: LogicalOperator,
-        right: Box<Expression>,
-    },
-}
-
 impl ExpressionType {
     pub fn identifier_name(&self) -> Option<String> {
         if let ExpressionType::Identifier { value } = self {
@@ -130,32 +109,20 @@ impl ExpressionType {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum ArithmeticOperator {
+pub enum BinaryOperator {
     Add,
     Sub,
     Mul,
     Div,
     Mod,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum LogicalOperator {
     And,
     Or,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum ComparisonOperator {
     Lt,
     Le,
     Gt,
     Ge,
     Eq,
     NotEq,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum BitOperator {
     BitAnd,
     BitOr,
     BitXor,

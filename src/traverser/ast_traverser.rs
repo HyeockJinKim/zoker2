@@ -2,10 +2,10 @@ use std::collections::HashMap;
 use crate::ast;
 use crate::caller::{Contract, Func, Op};
 use crate::caller::operation::{bin_op, call, load, push, repeat, ret};
-use crate::parser::ast::{BinaryExpressionType, ContractStatementType, ExpressionType, GlobalStatementType, ParameterType, StatementType};
+use crate::parser::ast::{BinaryOperator, ContractStatementType, ExpressionType, GlobalStatementType, ParameterType, StatementType};
 use crate::variable::functor::Functor;
 use crate::variable::uint::{Constant, Uint};
-use crate::variable::{add, sub, Var};
+use crate::variable::{add, div, mul, sub, Var};
 
 struct Context {
     ops: Vec<Op>,
@@ -107,7 +107,13 @@ impl ASTTraverser {
 
     fn traverse_expression(ctx: Context, expr: &ast::Expression) -> Context {
         match &expr.node {
-            ExpressionType::BinaryExpression(bin) => Self::traverse_bin(ctx, bin),
+            ExpressionType::BinaryExpression {
+                left, operator, right
+            } => {
+                let ctx = Self::traverse_expression(ctx, left);
+                let ctx = Self::traverse_expression(ctx, right);
+                Self::traverse_operator(ctx, operator)
+            },
             ExpressionType::FunctionCallExpression { function_name, arguments } => {
                 let ctx = ctx.var(function_name.clone());
                 arguments.iter().fold(ctx, Self::traverse_expression)
@@ -118,15 +124,26 @@ impl ASTTraverser {
         }
     }
 
-    fn traverse_bin(ctx: Context, expr: &ast::BinaryExpression) -> Context {
-        match &expr.node {
-            BinaryExpressionType::Arithmetic { left, operator, right } => {
-
-                ctx.with_op(bin_op(add))
-            },
-            BinaryExpressionType::Bit { left, operator, right } => ctx.with_op(bin_op(sub)),
-            BinaryExpressionType::Comparison { left, operator, right } => ctx.with_op(bin_op(add)),
-            BinaryExpressionType::Logical { left, operator, right } => ctx.with_op(bin_op(add)),
+    fn traverse_operator(ctx: Context, op: &ast::BinaryOperator) -> Context {
+        match op {
+            BinaryOperator::Add => ctx.with_op(bin_op(add)),
+            BinaryOperator::Sub => ctx.with_op(bin_op(sub)),
+            BinaryOperator::Mul => ctx.with_op(bin_op(mul)),
+            BinaryOperator::Div => ctx.with_op(bin_op(div)),
+            BinaryOperator::Mod  => ctx.with_op(bin_op(add)),
+            BinaryOperator::And  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Or  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Lt  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Le  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Gt  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Ge  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Eq  => ctx.with_op(bin_op(add)),
+            BinaryOperator::NotEq  => ctx.with_op(bin_op(add)),
+            BinaryOperator::BitAnd  => ctx.with_op(bin_op(add)),
+            BinaryOperator::BitOr  => ctx.with_op(bin_op(add)),
+            BinaryOperator::BitXor  => ctx.with_op(bin_op(add)),
+            BinaryOperator::LShift  => ctx.with_op(bin_op(add)),
+            BinaryOperator::RShift  => ctx.with_op(bin_op(add)),
         }
     }
 }

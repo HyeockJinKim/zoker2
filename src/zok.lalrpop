@@ -215,16 +215,11 @@ AssignOperator: ast::AssignOperator = {
 LogicalOrExpression: ast::Expression = {
     <l:LogicalOrExpression> <location:@L> "||" <r:LogicalAndExpression> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Logical {
-                    left: Box::new(l),
-                    operator: ast::LogicalOperator::Or,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: ast::BinaryOperator::Or,
+            right: Box::new(r),
+        },
     },
     LogicalAndExpression,
 };
@@ -232,16 +227,11 @@ LogicalOrExpression: ast::Expression = {
 LogicalAndExpression: ast::Expression = {
     <l:LogicalAndExpression> <location:@L> "&&" <r:BitOrExpression> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Logical {
-                    left: Box::new(l),
-                    operator: ast::LogicalOperator::And,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: ast::BinaryOperator::And,
+            right: Box::new(r),
+        },
     },
     BitOrExpression,
 };
@@ -249,16 +239,11 @@ LogicalAndExpression: ast::Expression = {
 BitOrExpression: ast::Expression = {
     <l:BitOrExpression> <location:@L> "|" <r:BitXorExpression> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Bit {
-                    left: Box::new(l),
-                    operator: ast::BitOperator::BitOr,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: ast::BinaryOperator::BitOr,
+            right: Box::new(r),
+        },
     },
     BitXorExpression,
 };
@@ -266,16 +251,11 @@ BitOrExpression: ast::Expression = {
 BitXorExpression: ast::Expression = {
     <l:BitXorExpression> <location:@L> "^" <r:BitAndExpression> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Bit {
-                    left: Box::new(l),
-                    operator: ast::BitOperator::BitXor,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: ast::BinaryOperator::BitXor,
+            right: Box::new(r),
+        },
     },
     BitAndExpression,
 };
@@ -283,16 +263,11 @@ BitXorExpression: ast::Expression = {
 BitAndExpression: ast::Expression = {
     <l:BitAndExpression> <location:@L> "&" <r:ComparisonExpression1> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Bit {
-                    left: Box::new(l),
-                    operator: ast::BitOperator::BitAnd,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: ast::BinaryOperator::BitAnd,
+            right: Box::new(r),
+        },
     },
     ComparisonExpression1,
 };
@@ -300,69 +275,54 @@ BitAndExpression: ast::Expression = {
 ComparisonExpression1: ast::Expression = {
     <l:ComparisonExpression1> <location:@L> <op:ComparisonOperator1> <r:ComparisonExpression2> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Comparison {
-                    left: Box::new(l),
-                    operator: op,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: op,
+            right: Box::new(r),
+        },
     },
     ComparisonExpression2,
 };
 
-ComparisonOperator1: ast::ComparisonOperator = {
-    "==" => ast::ComparisonOperator::Eq,
-    "!=" => ast::ComparisonOperator::NotEq,
+ComparisonOperator1: ast::BinaryOperator = {
+    "==" => ast::BinaryOperator::Eq,
+    "!=" => ast::BinaryOperator::NotEq,
 };
 
 ComparisonExpression2: ast::Expression = {
     <l:ComparisonExpression2> <location:@L> <op:ComparisonOperator2> <r:ArithmeticExpression1> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Comparison {
-                    left: Box::new(l),
-                    operator: op,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: op,
+            right: Box::new(r),
+        },
     },
     ShiftExpression,
 };
 
-ComparisonOperator2: ast::ComparisonOperator = {
-    "<" => ast::ComparisonOperator::Lt,
-    "<=" => ast::ComparisonOperator::Le,
-    ">" => ast::ComparisonOperator::Gt,
-    ">=" => ast::ComparisonOperator::Ge,
+ComparisonOperator2: ast::BinaryOperator = {
+    "<" => ast::BinaryOperator::Lt,
+    "<=" => ast::BinaryOperator::Le,
+    ">" => ast::BinaryOperator::Gt,
+    ">=" => ast::BinaryOperator::Ge,
 };
 
 ShiftExpression: ast::Expression = {
     <l:ShiftExpression> <location:@L> <op:ShiftOperator> <r:ArithmeticExpression1> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Bit {
-                    left: Box::new(l),
-                    operator: op,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: op,
+            right: Box::new(r),
+        },
     },
     ArithmeticExpression1,
 };
 
-ShiftOperator: ast::BitOperator = {
-    "<<" => ast::BitOperator::LShift,
-    ">>" => ast::BitOperator::RShift,
+ShiftOperator: ast::BinaryOperator = {
+    "<<" => ast::BinaryOperator::LShift,
+    ">>" => ast::BinaryOperator::RShift,
 };
 
 /// Separate Arithmetic Expression grammar for priority
@@ -377,46 +337,36 @@ ShiftOperator: ast::BitOperator = {
 ArithmeticExpression1: ast::Expression = {
     <l:ArithmeticExpression1> <location:@L> <op:ArithmeticOperator1> <r:ArithmeticExpression2> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Arithmetic {
-                    left: Box::new(l),
-                    operator: op,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: op,
+            right: Box::new(r),
+        },
     },
     ArithmeticExpression2,
 };
 
-ArithmeticOperator1: ast::ArithmeticOperator = {
-    "+" => ast::ArithmeticOperator::Add,
-    "-" => ast::ArithmeticOperator::Sub,
+ArithmeticOperator1: ast::BinaryOperator = {
+    "+" => ast::BinaryOperator::Add,
+    "-" => ast::BinaryOperator::Sub,
 };
 
 ArithmeticExpression2: ast::Expression = {
     <l:ArithmeticExpression2> <location:@L> <op:ArithmeticOperator2> <r:Value> => ast::Expression {
         location,
-        node: ast::ExpressionType::BinaryExpression(
-            ast::BinaryExpression {
-                location,
-                node: ast::BinaryExpressionType::Arithmetic {
-                    left: Box::new(l),
-                    operator: op,
-                    right: Box::new(r),
-                }
-            }
-        ),
+        node: ast::ExpressionType::BinaryExpression{
+            left: Box::new(l),
+            operator: op,
+            right: Box::new(r),
+        },
     },
     Value,
 };
 
-ArithmeticOperator2: ast::ArithmeticOperator = {
-    "*" => ast::ArithmeticOperator::Mul,
-    "/" => ast::ArithmeticOperator::Div,
-    "%" => ast::ArithmeticOperator::Mod,
+ArithmeticOperator2: ast::BinaryOperator = {
+    "*" => ast::BinaryOperator::Mul,
+    "/" => ast::BinaryOperator::Div,
+    "%" => ast::BinaryOperator::Mod,
 };
 
 Arguments: Vec<ast::Expression> = {
