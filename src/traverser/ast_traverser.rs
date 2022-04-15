@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use crate::ast;
 use crate::caller::{Contract, Func, Op};
-use crate::caller::operation::{ call, push, repeat, ret};
+use crate::caller::operation::{bin_op, call, push, repeat, ret};
 use crate::parser::ast::{BinaryExpressionType, ContractStatementType, ExpressionType, GlobalStatementType, ParameterType, StatementType};
 use crate::variable::functor::Functor;
 use crate::variable::uint::{Constant, Uint};
-use crate::variable::Var;
+use crate::variable::{add, sub, Var};
 
 struct Context {
     variables: HashMap<String, Var>,
@@ -80,7 +80,7 @@ impl ASTTraverser {
 
     fn traverse_parameter(ctx: Context, param: &ast::Parameter) -> Context {
         match &param.node {
-            ParameterType::Private { variable_type: _variable_type, variable } => ctx.new_var(Uint::new(variable.clone(), true)),
+            ParameterType::Private { variable_type: _variable_type, variable } => ctx.new_var(Uint::new(variable.clone(), true)), // name을 key로 pop 해서 var을 넣어야겠다!
             ParameterType::Public { variable_type: _variable_type, variable } => ctx.new_var(Uint::new(variable.clone(), false)),
         }
     }
@@ -128,11 +128,12 @@ impl ASTTraverser {
     fn traverse_bin(ctx: Context, expr: &ast::BinaryExpression) -> Context {
         match &expr.node {
             BinaryExpressionType::Arithmetic { left, operator, right } => {
-                ctx
-            }
-            BinaryExpressionType::Bit { left, operator, right } => ctx,
-            BinaryExpressionType::Comparison { left, operator, right } => ctx,
-            BinaryExpressionType::Logical { left, operator, right } => ctx,
+
+                ctx.with_op(bin_op(add))
+            },
+            BinaryExpressionType::Bit { left, operator, right } => ctx.with_op(bin_op(sub)),
+            BinaryExpressionType::Comparison { left, operator, right } => ctx.with_op(bin_op(add)),
+            BinaryExpressionType::Logical { left, operator, right } => ctx.with_op(bin_op(add)),
         }
     }
 }

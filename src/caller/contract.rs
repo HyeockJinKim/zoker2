@@ -1,4 +1,5 @@
-use crate::caller::Func;
+use crate::caller::{Caller, Context, Func};
+use crate::generator::Generator;
 
 pub struct Contract {
     name: String,
@@ -11,5 +12,11 @@ impl Contract {
             name,
             funcs,
         }
+    }
+}
+
+impl Caller for Contract {
+    fn call(&self, ctx: Context, generator: impl Generator) {
+        todo!()
     }
 }

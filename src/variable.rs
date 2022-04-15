@@ -10,3 +10,19 @@ pub trait Variable {
     fn gen(self);
     fn capture(&self) -> Var;
 }
+
+pub fn add(a: Var, b: Var) -> Var {
+    a
+}
+
+pub fn sub(a: Var, b: Var) -> Var {
+    a
+}
+
+pub fn mul(a: Var, b: Var) -> Var {
+    a
+}
+
+pub fn div(a: Var, b: Var) -> Var {
+    a
+}

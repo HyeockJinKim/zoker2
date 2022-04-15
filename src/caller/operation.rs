@@ -1,18 +1,6 @@
+use crate::caller::Context;
 use crate::generator::Generator;
 use crate::variable::Var;
-
-pub struct Context {
-    stack: Vec<Var>,
-}
-
-/// Operation Context (Runtime Context)
-impl Context {
-    pub(crate) fn new() -> Self {
-        Self {
-            stack: Default::default(),
-        }
-    }
-}
 
 pub type Op = Box<dyn Operation>;
 pub trait Operation = FnOnce(Context) -> Context;
@@ -27,8 +15,8 @@ pub fn push(var: Var) -> Op {
 
 pub fn bin_op(op: BinOp) -> Op {
     Box::new(move |mut ctx: Context| {
-        let c1 = ctx.stack.pop().unwrap();
         let c2 = ctx.stack.pop().unwrap();
+        let c1 = ctx.stack.pop().unwrap();
         ctx.stack.push(op(c1, c2));
         ctx
     })
@@ -36,8 +24,8 @@ pub fn bin_op(op: BinOp) -> Op {
 
 pub fn condition() -> Op {
     Box::new(move |mut ctx: Context| {
-        let c1 = ctx.stack.pop().unwrap();
         let c2 = ctx.stack.pop().unwrap();
+        let c1 = ctx.stack.pop().unwrap();
         let cond = ctx.stack.pop().unwrap();
         ctx
     })

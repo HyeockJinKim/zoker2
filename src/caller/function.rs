@@ -1,4 +1,5 @@
-use crate::caller::Op;
+use crate::caller::{Caller, Context, Op};
+use crate::generator::Generator;
 
 pub struct Func {
     name: String,
@@ -11,5 +12,11 @@ impl Func {
             name,
             ops,
         }
+    }
+}
+
+impl Caller for Func {
+    fn call(&self, ctx: Context, generator: impl Generator) {
+        todo!()
     }
 }
