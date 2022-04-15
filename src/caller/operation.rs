@@ -13,6 +13,14 @@ pub fn push(var: Var) -> Op {
     })
 }
 
+pub fn init(v: Var) -> Op {
+    Box::new(move |mut ctx: Context| {
+        let name = v.name();
+        ctx.variables.insert(name, v);
+        ctx
+    })
+}
+
 pub fn load(var: String) -> Op {
     Box::new(move |mut ctx: Context| {
         let v = ctx.variables.get(var.as_str()).unwrap();

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use crate::ast;
 use crate::caller::{Contract, Func, Op};
-use crate::caller::operation::{bin_op, call, load, push, repeat, ret};
+use crate::caller::operation::{bin_op, call, init, load, push, repeat, ret};
 use crate::parser::ast::{BinaryOperator, ContractStatementType, ExpressionType, GlobalStatementType, ParameterType, StatementType};
 use crate::variable::functor::Functor;
 use crate::variable::uint::{Constant, Uint};
@@ -31,7 +31,8 @@ impl Context {
         self
     }
 
-    pub(crate) fn new_var(mut self, v: Var) -> Self {
+    pub(crate) fn init_var(mut self, v: Var) -> Self {
+        self.ops.push(init(v));
         self
     }
 
@@ -73,8 +74,8 @@ impl ASTTraverser {
 
     fn traverse_parameter(ctx: Context, param: &ast::Parameter) -> Context {
         match &param.node {
-            ParameterType::Private { variable_type: _variable_type, variable } => ctx.new_var(Uint::new(variable.clone(), true)), // name을 key로 pop 해서 var을 넣어야겠다!
-            ParameterType::Public { variable_type: _variable_type, variable } => ctx.new_var(Uint::new(variable.clone(), false)),
+            ParameterType::Private { variable_type: _variable_type, variable } => ctx.init_var(Uint::new(variable.clone(), true)), // name을 key로 pop 해서 var을 넣어야겠다!
+            ParameterType::Public { variable_type: _variable_type, variable } => ctx.init_var(Uint::new(variable.clone(), false)),
         }
     }
 
@@ -96,7 +97,7 @@ impl ASTTraverser {
             }
             StatementType::ReturnStatement { return_value } => Self::traverse_expression(ctx, return_value).with_op(ret()),
             StatementType::InitializerStatement { variable_type: _variable_type, variable, default } => {
-                let ctx = ctx.new_var(Uint::new(variable.clone(), false));
+                let ctx = ctx.init_var(Uint::new(variable.clone(), false));
                 ctx
                 // default.map_or(ctx.sub_context(), |expr: &ast::Expression| Self::traverse_expression(ctx, expr)) // TODO: assign 동작
             }
