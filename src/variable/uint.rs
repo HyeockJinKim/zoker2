@@ -2,7 +2,7 @@ use crate::variable::{Var, Variable};
 
 pub struct Uint {
     name: String,
-    privacy: bool,
+    privacy: bool, // TODO: privacy 대신 struct를 분리
 }
 
 impl Uint {
@@ -19,7 +19,7 @@ impl Variable for Uint {
         self.name.clone()
     }
 
-    fn gen(self) {
+    fn eval(self) {
         todo!()
     }
 
@@ -48,7 +48,7 @@ impl Variable for Constant {
         "".to_string()
     }
 
-    fn gen(self) {
+    fn eval(self) {
         todo!()
     }
 

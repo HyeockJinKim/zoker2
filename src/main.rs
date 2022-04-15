@@ -5,4 +5,4 @@ fn main() {
     let contracts = ASTTraverser::traverse(res);
 }
 
-// contract A { function f() returns uint { return 0; } }
+// contract A { function check(uint age) returns uint { return age > 19; } }

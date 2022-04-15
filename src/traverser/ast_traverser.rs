@@ -1,14 +1,13 @@
 use std::collections::HashMap;
 use crate::ast;
 use crate::caller::{Contract, Func, Op};
-use crate::caller::operation::{bin_op, call, push, repeat, ret};
+use crate::caller::operation::{bin_op, call, load, push, repeat, ret};
 use crate::parser::ast::{BinaryExpressionType, ContractStatementType, ExpressionType, GlobalStatementType, ParameterType, StatementType};
 use crate::variable::functor::Functor;
 use crate::variable::uint::{Constant, Uint};
 use crate::variable::{add, sub, Var};
 
 struct Context {
-    variables: HashMap<String, Var>,
     ops: Vec<Op>,
 }
 
@@ -16,29 +15,23 @@ struct Context {
 impl Context {
     pub(crate) fn new() -> Self {
         Self {
-            variables: Default::default(),
             ops: Default::default(),
         }
     }
 
     pub(crate) fn sub_context(&self) -> Self {
-        let mut variables: HashMap<String, Var> = HashMap::new();
-        self.variables.iter().for_each(|(k, v)| {
-            variables.insert(k.clone(), v.capture());
-        });
+        /// TODO: compile context에서 type check 정도는 필요해보임
         Self {
-            variables,
             ops: Default::default(),
         }
     }
 
     pub(crate) fn var(mut self, k: String) -> Self {
-        self.ops.push(push(self.variables.get(k.as_str()).unwrap().capture()));
+        self.ops.push(load(k));
         self
     }
 
     pub(crate) fn new_var(mut self, v: Var) -> Self {
-        self.variables.insert(v.name(), v);
         self
     }
 

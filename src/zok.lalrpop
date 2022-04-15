@@ -42,13 +42,17 @@ ContractMember: ast::ContractStatement = {
 };
 
 FunctionStatement: ast::ContractStatement = {
-    <location:@L> "function" <id:name> "(" <params:Parameters?> ")" "returns" <return_type:Type> "{" <stmts:Statements> "}" => ast::ContractStatement {
-        location,
-        node: ast::ContractStatementType::FunctionStatement {
-            function_name: id,
-            parameters: params.unwrap_or(vec![]),
-            return_type,
-            statements: stmts,
+    <location:@L> "function" <id:name> "(" <params:Parameters?> ")" "returns" <return_type:Type> "{" <mut stmts:Statements?> <ret:ReturnStatement> ";" "}" => {
+        let mut statements = stmts.unwrap_or(vec![]);
+        statements.push(ret);
+        ast::ContractStatement {
+            location,
+            node: ast::ContractStatementType::FunctionStatement {
+                function_name: id,
+                parameters: params.unwrap_or(vec![]),
+                return_type,
+                statements,
+            }
         }
     },
 };
@@ -96,13 +100,11 @@ Statements: Vec<ast::Statement> = {
 /// IfStatement
 /// ForEachStatement
 /// InitializerStatement
-/// ReturnStatement
 /// Expression
 pub Statement: ast::Statement = {
     IfStatement,
     ForEachStatement,
     InitializerStatement,
-    ReturnStatement,
     <location:@L> <expr:Expression> => ast::Statement {
         location,
         node: ast::StatementType::Expression {

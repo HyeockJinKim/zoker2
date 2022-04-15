@@ -16,7 +16,7 @@ impl Variable for Functor {
         todo!()
     }
 
-    fn gen(self) {
+    fn eval(self) {
         todo!()
     }
 
