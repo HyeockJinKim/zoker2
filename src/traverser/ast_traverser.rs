@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use crate::ast;
 use crate::caller::{Contract, Func, Op};
-use crate::caller::operation::{bin_op, call, init, load, push, repeat, ret};
-use crate::parser::ast::{BinaryOperator, ContractStatementType, ExpressionType, GlobalStatementType, ParameterType, StatementType};
+use crate::caller::operation::{bin_op, call, init, load, push, repeat, ret, store};
+use crate::parser::ast::{BinaryOperator, ContractStatementType, Expression, ExpressionType, GlobalStatementType, ParameterType, StatementType};
 use crate::variable::functor::Functor;
 use crate::variable::uint::{Constant, Uint};
 use crate::variable::{add, div, mul, sub, Var};
@@ -89,6 +89,7 @@ impl ASTTraverser {
                     .with_op(push(Functor::new(else_ops)))
             }
             StatementType::ForEachStatement { iterator, iterable, statements } => {
+                // TODO: foreach는 vector를 type 추가한 후에 구현 가능
                 let ctx = Self::traverse_expression(ctx, iterable);
                 // TODO: iterator를 받아서 처리
                 let ops = statements.iter().fold(ctx.sub_context(), Self::traverse_statement).ops();
@@ -98,10 +99,15 @@ impl ASTTraverser {
             StatementType::ReturnStatement { return_value } => Self::traverse_expression(ctx, return_value).with_op(ret()),
             StatementType::InitializerStatement { variable_type: _variable_type, variable, default } => {
                 let ctx = ctx.init_var(Uint::new(variable.clone(), false));
-                ctx
-                // default.map_or(ctx.sub_context(), |expr: &ast::Expression| Self::traverse_expression(ctx, expr)) // TODO: assign 동작
+                match default {
+                    Some(expr) => Self::traverse_expression(ctx, expr).with_op(store(variable.clone())),
+                    None => ctx,
+                }
             }
-            StatementType::AssignStatement { left, operator, right } => ctx,  // TODO: assign 동작
+            StatementType::AssignStatement { left, operator: _, right } => {
+                Self::traverse_expression(ctx, right)
+                    .with_op(store(left.clone()))  // TODO: string과 index 매핑하면 runtime에서는 string이 없어도 됨
+            }
             StatementType::Expression { expression } => Self::traverse_expression(ctx, expression),
         }
     }
@@ -114,7 +120,7 @@ impl ASTTraverser {
                 let ctx = Self::traverse_expression(ctx, left);
                 let ctx = Self::traverse_expression(ctx, right);
                 Self::traverse_operator(ctx, operator)
-            },
+            }
             ExpressionType::FunctionCallExpression { function_name, arguments } => {
                 let ctx = ctx.var(function_name.clone());
                 arguments.iter().fold(ctx, Self::traverse_expression)
@@ -131,20 +137,20 @@ impl ASTTraverser {
             BinaryOperator::Sub => ctx.with_op(bin_op(sub)),
             BinaryOperator::Mul => ctx.with_op(bin_op(mul)),
             BinaryOperator::Div => ctx.with_op(bin_op(div)),
-            BinaryOperator::Mod  => ctx.with_op(bin_op(add)),
-            BinaryOperator::And  => ctx.with_op(bin_op(add)),
-            BinaryOperator::Or  => ctx.with_op(bin_op(add)),
-            BinaryOperator::Lt  => ctx.with_op(bin_op(add)),
-            BinaryOperator::Le  => ctx.with_op(bin_op(add)),
-            BinaryOperator::Gt  => ctx.with_op(bin_op(add)),
-            BinaryOperator::Ge  => ctx.with_op(bin_op(add)),
-            BinaryOperator::Eq  => ctx.with_op(bin_op(add)),
-            BinaryOperator::NotEq  => ctx.with_op(bin_op(add)),
-            BinaryOperator::BitAnd  => ctx.with_op(bin_op(add)),
-            BinaryOperator::BitOr  => ctx.with_op(bin_op(add)),
-            BinaryOperator::BitXor  => ctx.with_op(bin_op(add)),
-            BinaryOperator::LShift  => ctx.with_op(bin_op(add)),
-            BinaryOperator::RShift  => ctx.with_op(bin_op(add)),
+            BinaryOperator::Mod => ctx.with_op(bin_op(add)),
+            BinaryOperator::And => ctx.with_op(bin_op(add)),
+            BinaryOperator::Or => ctx.with_op(bin_op(add)),
+            BinaryOperator::Lt => ctx.with_op(bin_op(add)),
+            BinaryOperator::Le => ctx.with_op(bin_op(add)),
+            BinaryOperator::Gt => ctx.with_op(bin_op(add)),
+            BinaryOperator::Ge => ctx.with_op(bin_op(add)),
+            BinaryOperator::Eq => ctx.with_op(bin_op(add)),
+            BinaryOperator::NotEq => ctx.with_op(bin_op(add)),
+            BinaryOperator::BitAnd => ctx.with_op(bin_op(add)),
+            BinaryOperator::BitOr => ctx.with_op(bin_op(add)),
+            BinaryOperator::BitXor => ctx.with_op(bin_op(add)),
+            BinaryOperator::LShift => ctx.with_op(bin_op(add)),
+            BinaryOperator::RShift => ctx.with_op(bin_op(add)),
         }
     }
 }

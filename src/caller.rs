@@ -1,6 +1,6 @@
-pub use contract::Contract;
-pub use function::Func;
-pub use operation::Op;
+pub(crate) use contract::Contract;
+pub(crate) use function::Func;
+pub(crate) use operation::Op;
 
 use std::collections::HashMap;
 use crate::generator::Generator;
@@ -26,5 +26,5 @@ impl Context {
 }
 
 pub trait Caller {
-    fn call(&self, ctx: Context, generator: impl Generator);
+    fn call(&self, ctx: Context) -> Context;
 }

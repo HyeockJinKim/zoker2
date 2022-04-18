@@ -7,7 +7,7 @@ pub struct Contract {
 }
 
 impl Contract {
-    pub fn new(name: String, funcs: Vec<Func>) -> Self {
+    pub(crate) fn new(name: String, funcs: Vec<Func>) -> Self {
         Self {
             name,
             funcs,
@@ -16,7 +16,7 @@ impl Contract {
 }
 
 impl Caller for Contract {
-    fn call(&self, ctx: Context, generator: impl Generator) {
-        todo!()
+    fn call(&self, ctx: Context) -> Context  {
+        self.funcs.iter().fold(ctx, |ctx, func| func.call(ctx))
     }
 }

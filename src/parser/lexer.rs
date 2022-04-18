@@ -7,13 +7,13 @@ use crate::parser::token::Tok;
 pub type Spanned = (Location, Tok, Location);
 pub type LexResult = Result<Spanned, LexicalError>;
 
-pub struct Lexer<T: Iterator<Item=char>> {
+pub(crate) struct Lexer<T: Iterator<Item=char>> {
     chars: T,
     location: Location,
     chr: Option<char>,
 }
 
-pub fn make_tokenizer(source: &'_ str) -> impl Iterator<Item=LexResult> + '_ {
+pub(crate) fn make_tokenizer(source: &'_ str) -> impl Iterator<Item=LexResult> + '_ {
     Lexer::new(source.chars())
 }
 
