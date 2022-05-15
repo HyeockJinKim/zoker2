@@ -1,9 +1,6 @@
-mod prover;
-mod verifier;
-
 use crate::caller::Caller;
-use crate::variable::Var;
+use crate::variable::Variable;
 
 pub trait Generator {
-    fn generate(&self, var: Var) -> String;
+    fn generate(&self, var: Variable) -> String;
 }

@@ -1,5 +1,3 @@
-#![feature(trait_alias)]
-
 use lalrpop_util::lalrpop_mod;
 use crate::error::ZokError;
 use crate::parser::ast;
@@ -14,6 +12,8 @@ mod traverser;
 mod generator;
 mod caller;
 mod variable;
+mod operation;
+mod utils;
 
 lalrpop_mod!(
     #[allow(clippy::all)]

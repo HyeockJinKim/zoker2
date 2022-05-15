@@ -1,30 +1,14 @@
-pub(crate) use contract::Contract;
-pub(crate) use function::Func;
-pub(crate) use operation::Op;
+pub use contract::Contract;
+pub use function::Func;
 
 use std::collections::HashMap;
+use std::sync::Arc;
 use crate::generator::Generator;
-use crate::variable::Var;
+use crate::operation::{Context, Operation};
 
 mod contract;
 mod function;
-pub mod operation;
-
-pub struct Context {
-    variables: HashMap<String, Var>,
-    stack: Vec<Var>,
-}
-
-/// Operation Context (Runtime Context)
-impl Context {
-    pub(crate) fn new() -> Self {
-        Self {
-            variables: Default::default(),
-            stack: Default::default(),
-        }
-    }
-}
 
 pub trait Caller {
-    fn call(&self, ctx: Context) -> Context;
+    fn call(&self, op: Arc<dyn Operation>) -> Context;
 }

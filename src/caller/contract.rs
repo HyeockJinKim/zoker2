@@ -1,9 +1,10 @@
+use std::sync::Arc;
 use crate::caller::{Caller, Context, Func};
-use crate::generator::Generator;
+use crate::operation::Operation;
 
 pub struct Contract {
     name: String,
-    funcs: Vec<Func>,
+    pub funcs: Vec<Func>,
 }
 
 impl Contract {
@@ -16,7 +17,8 @@ impl Contract {
 }
 
 impl Caller for Contract {
-    fn call(&self, ctx: Context) -> Context  {
-        self.funcs.iter().fold(ctx, |ctx, func| func.call(ctx))
+    fn call(&self, op: Arc<dyn Operation>) -> Context {
+        // TODO:
+        self.funcs[0].call(op)
     }
 }

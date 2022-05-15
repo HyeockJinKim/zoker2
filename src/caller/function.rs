@@ -1,23 +1,23 @@
-use crate::caller::{Caller, Context, Op};
-use crate::generator::Generator;
+use std::sync::Arc;
+use crate::caller::Caller;
+use crate::operation::{Context, LazyOp, Operation};
 
 pub struct Func {
     name: String,
-    ops: Vec<Op>,
+    ret: LazyOp,
 }
 
 impl Func {
-    pub(crate) fn new(name: String, ops: Vec<Op>) -> Self {
+    pub(crate) fn new(name: String, ret: LazyOp) -> Self {
         Self{
             name,
-            ops,
+            ret,
         }
     }
 }
 
 impl Caller for Func {
-    fn call(&self, ctx: Context) -> Context {
-        // self.ops.iter().fold(ctx, move |ctx, op| op(ctx))
-        ctx
+    fn call(&self, op: Arc<dyn Operation>) -> Context {
+        self.ret.clone().run(op)
     }
 }

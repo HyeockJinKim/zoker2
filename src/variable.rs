@@ -1,28 +1,44 @@
-use crate::caller::Op;
+use crate::operation::{lazy_private, lazy_public, LazyOp};
 
-pub mod uint;
-pub mod functor;
-
-pub type Var = Box<dyn Variable>;
-
-pub trait Variable {
-    fn name(&self) -> String;
-    fn eval(self);
-    fn capture(&self) -> Var;
+pub struct Variable {
+    name: String,
+    lazy: LazyOp,
 }
 
-pub fn add(a: Var, b: Var) -> Var {
-    a
-}
+impl Variable {
+    pub fn private(name: String) -> Self {
+        Self {
+            name: name.clone(),
+            lazy: lazy_private(name, 0),
+        }
+    }
 
-pub fn sub(a: Var, b: Var) -> Var {
-    a
-}
+    pub fn public(name: String) -> Self {
+        Self {
+            name: name.clone(),
+            lazy: lazy_public(name, 0),
+        }
+    }
 
-pub fn mul(a: Var, b: Var) -> Var {
-    a
-}
+    pub fn temp(lazy: LazyOp) -> Self {
+        Self {
+            name: String::new(),
+            lazy,
+        }
+    }
 
-pub fn div(a: Var, b: Var) -> Var {
-    a
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    pub fn capture(&self) -> Self {
+        Self {
+            name: self.name.clone(),
+            lazy: self.lazy.clone(),
+        }
+    }
+
+    pub fn inject(&self) -> LazyOp {
+        self.lazy.clone()
+    }
 }
