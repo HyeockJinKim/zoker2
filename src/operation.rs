@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use crate::operation::calculation::COperation;
 use crate::utils::Runner;
 
 mod calculation;
@@ -29,6 +30,10 @@ pub trait Operation {
     // fn rshift(a: impl Context, b: impl Context) -> dyn Context;
 }
 
+pub fn calc_operation() ->  Arc<dyn Operation> {
+    return Arc::new(COperation{})
+}
+
 /// TODO: Fn 을 Clone 또는 Copy하기 위한 wrapper를 둬야할 것
 pub(crate) type LazyOp = Runner<Arc<dyn Operation>, Context>;
 
@@ -46,7 +51,7 @@ pub fn lazy_public(name: String, a: u64) -> LazyOp {
 
 pub fn lazy_add(a: LazyOp, b: LazyOp) -> LazyOp {
     Runner::new(Arc::new(move |op| {
-        let a_res = a.clone().run(op.clone());
+        let a_res = a.clone().run(op.clone()); // proving,// verifying operation
         let b_res = b.clone().run(op.clone());
         op.add(a_res, b_res)
     }))
@@ -103,5 +108,9 @@ impl Context {
             name: self.name.clone(),
             v: self.v.clone(),
         }
+    }
+
+    pub fn finalize(self) -> Vec<u32> {
+        self.v
     }
 }

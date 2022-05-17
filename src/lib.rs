@@ -3,6 +3,7 @@ use crate::error::ZokError;
 use crate::parser::ast;
 use crate::parser::lexer::make_tokenizer;
 pub use traverser::ASTTraverser;
+pub use operation::calc_operation;
 
 pub mod error;
 mod parser;

@@ -8,7 +8,3 @@ use crate::operation::{Context, Operation};
 
 mod contract;
 mod function;
-
-pub trait Caller {
-    fn call(&self, op: Arc<dyn Operation>) -> Context;
-}
